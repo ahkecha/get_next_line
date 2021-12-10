@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ahkecha <ahkecha@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/12/10 11:18:44 by ahkecha           #+#    #+#             */
-/*   Updated: 2021/12/10 17:46:25 by ahkecha          ###   ########.fr       */
+/*   Created: 2021/11/12 14:12:25 by ahkecha           #+#    #+#             */
+/*   Updated: 2021/11/12 17:23:39 by ahkecha          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void	ft_free(char **str)
 {
@@ -57,25 +57,25 @@ char	*d(char **s_buff, t_list *var)
 
 char	*get_next_line(int fd)
 {
-	static char	*s_buff;
+	static char	*s_buff[10240];
 	t_list		var;
 
 	if (BUFFER_SIZE <= 0 || fd < 0 || fd > 4096)
 		return (NULL);
-	var.tab[0] = get_line2(fd, &s_buff, &var);
+	var.tab[0] = get_line2(fd, &s_buff[fd], &var);
 	if (var.tab[0] == -1)
-		return (ft_freesec(&s_buff));
+		return (ft_freesec(&s_buff[fd]));
 	if (var.ch)
 	{
-		var.tab[1] = ft_strlen(s_buff) - ft_strlen(var.ch);
-		var.line = ft_substr(s_buff, 0, var.tab[1] + 1);
-		var.ch = s_buff;
-		s_buff = ft_strdup(s_buff + var.tab[1] + 1);
+		var.tab[1] = ft_strlen(s_buff[fd]) - ft_strlen(var.ch);
+		var.line = ft_substr(s_buff[fd], 0, var.tab[1] + 1);
+		var.ch = s_buff[fd];
+		s_buff[fd] = ft_strdup(s_buff[fd] + var.tab[1] + 1);
 		free(var.ch);
 	}
 	else
-		return (d(&s_buff, &var));
-	if ((var.tab[0] == 0 && s_buff != NULL) || var.tab[0])
+		return (d(&s_buff[fd], &var));
+	if ((var.tab[0] == 0 && s_buff[fd] != NULL) || var.tab[0])
 		return (var.line);
 	return (NULL);
 }
